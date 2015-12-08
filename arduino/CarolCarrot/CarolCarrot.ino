@@ -15,6 +15,8 @@ boolean pinPlaying[] = {false, false, false, false};
 int pinPlayheads[] = {0, 0, 0, 0};
 int pinPlayedAt[] = {0, 0, 0, 0};
 
+int treshold = 800;
+
 void setup()
 {
   pinMode(LED, OUTPUT);
@@ -27,17 +29,17 @@ void loop()
 {
   frame++;
 
-  pinValues[0] = analogRead(1);
-  pinValues[1] = analogRead(2);
-  pinValues[2] = analogRead(3);
-  pinValues[3] = analogRead(4);
+  pinValues[0] = analogRead(0);
+  pinValues[1] = analogRead(1);
+  pinValues[2] = analogRead(2);
+  pinValues[3] = analogRead(3);
   
-  //Serial.println(pinValues[0]);
+ // Serial.println(pinValues[frame%4]);
 
   playSequence(0, carolLow, 4, 1);
   playSequence(1, carolHigh, 4, 1);
   playSequence(2, bongos, 3, 2);
-  playSequence(2, cymbals, 4, 3);
+  playSequence(3, cymbals, 4, 3);
 
   delay(50);
 }
@@ -46,14 +48,14 @@ void loop()
 
 void playSequence(int pin, int sequence[], int seqLength, int channel)
 {
-  if (!pinPlaying[pin] && pinValues[pin] < 500)
+  if (!pinPlaying[pin] && pinValues[pin] < treshold)
   {
-    if (frame - pinPlayedAt[pin] > 100) pinPlayheads[pin] = 0; // reset to start of tapped long ago
+    if (frame - pinPlayedAt[pin] > 100) pinPlayheads[pin] = 0; // reset to start if tapped long ago
     MIDI.sendNoteOn(sequence[pinPlayheads[pin] % seqLength], 127, channel);
     pinPlaying[pin] = true;
     pinPlayedAt[pin] = frame;
   }
-  else if (pinPlaying[pin] && pinValues[pin] > 500)
+  else if (pinPlaying[pin] && pinValues[pin] > treshold)
   {
     MIDI.sendNoteOff(sequence[pinPlayheads[pin] % seqLength], 127, channel);
     pinPlaying[pin] = false;
