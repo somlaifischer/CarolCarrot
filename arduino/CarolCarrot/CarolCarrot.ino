@@ -34,11 +34,11 @@ void setup()
 void loop()
 {
   frame++;
+  if (!(analogRead(0) != analogRead(0))) pin0Values[frame % smoothNum] = analogRead(0);
+  if (!(analogRead(3) != analogRead(3))) pin1Values[frame % smoothNum] = analogRead(3);
+  if (!(analogRead(2) != analogRead(2))) pin2Values[frame % smoothNum] = analogRead(2);
+  if (!(analogRead(1) != analogRead(1))) pin3Values[frame % smoothNum] = analogRead(1);
 
-  pin0Values[frame % smoothNum] = analogRead(0);
-  pin1Values[frame % smoothNum] = analogRead(3);
-  pin2Values[frame % smoothNum] = analogRead(2);
-  pin3Values[frame % smoothNum] = analogRead(1);
   calcAverages();
   if (debug)
   {
